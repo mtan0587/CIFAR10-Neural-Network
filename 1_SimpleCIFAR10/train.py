@@ -190,14 +190,19 @@ def preprocess_data(data, device, dtype):
 def load_cifar10(device, dtype, data_dir=None):
     if data_dir is None:
         data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '.data')
-    train = torchvision.datasets.CIFAR10(root=data_dir, download=True)
-    valid = torchvision.datasets.CIFAR10(root=data_dir, train=False)
+    train_set = torchvision.datasets.CIFAR10(root=data_dir, download=True)
+    test_set = torchvision.datasets.CIFAR10(root=data_dir, train=False)
 
-    train_data = preprocess_data(train.data, device, dtype)
-    valid_data = preprocess_data(valid.data, device, dtype)
+    import numpy as np
+    all_data = np.concatenate([train_set.data, test_set.data], axis=0)
+    all_targets = train_set.targets + test_set.targets
 
-    train_targets = torch.tensor(train.targets).to(device)
-    valid_targets = torch.tensor(valid.targets).to(device)
+    split = int(0.8 * len(all_data))
+    train_data = preprocess_data(all_data[:split], device, dtype)
+    valid_data = preprocess_data(all_data[split:], device, dtype)
+
+    train_targets = torch.tensor(all_targets[:split]).to(device)
+    valid_targets = torch.tensor(all_targets[split:]).to(device)
 
     # Pad 32x32 to 40x40
     train_data = nn.ReflectionPad2d(4)(train_data)
