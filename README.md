@@ -127,7 +127,7 @@ pip install torch torchvision numpy matplotlib
 This project was completed as part of a group assignment. Thanks to my teammates:
 
 - **Jorge Lara Mino**
-- **Naratorn Pisedtalasai**
+- **Naratorn Pisedtalasalasai**
 
 ---
 
